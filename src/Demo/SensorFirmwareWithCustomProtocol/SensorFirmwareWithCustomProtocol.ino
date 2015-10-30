@@ -1,39 +1,46 @@
+#include <SoftwareSerial.h>
+
 int bluetoothTxPin = 8;
+
 int bluetoothRxPin = 9;
+SoftwareSerial bluetooth(bluetoothTxPin, bluetoothRxPin);
+
 int ultrasonicTriggerPin = 12;
 int ultrasonicEchoPin = 3;
 
+
 void setup() {
-	configureUltrasonic(ultrasonicTriggerPin, ultrasonicEchoPin);
+	configureUltrasonic();
+	configureBluetooth();
 }
 
 void loop() {
-	Serial.println("Reading distance");
-	long distance = readDistanceWithUltrasonic(ultrasonicTriggerPin, ultrasonicEchoPin);
+	long distance = readDistanceWithUltrasonic();
 	Serial.println(distance);
+	bluetooth.println(distance);
 	delay(1000);
-
-	//Serial.print(distance);
-	//Serial.println();
-	//delay(1000);
 }
 
-
-void configureDiagnostics(int baudRate) {
-	Serial.begin(baudRate);
+void configureBluetooth() {
+	bluetooth.begin(9600);
+	bluetooth.print("$");
+	bluetooth.print("$");
+	bluetooth.print("$");
+	delay(100);
+	bluetooth.println("SU,96");
+	delay(100);
+	bluetooth.println("---");
+	bluetooth.begin(9600);
 }
 
-void configureBluetooth(int txPin, int rxPin) {
-}
-
-long readDistanceWithUltrasonic(int triggerPin, int echoPin) {
-	digitalWrite(triggerPin, LOW);
+long readDistanceWithUltrasonic() {
+	digitalWrite(ultrasonicTriggerPin, LOW);
 	delayMicroseconds(2);
-	digitalWrite(triggerPin, HIGH);
-	delayMicroseconds(5);
-	digitalWrite(triggerPin, LOW);
+	digitalWrite(ultrasonicTriggerPin, HIGH);
+	delayMicroseconds(10);
+	digitalWrite(ultrasonicTriggerPin, LOW);
 
-	long duration = pulseIn(echoPin, HIGH);
+	long duration = pulseIn(ultrasonicEchoPin, HIGH);
 
 	long centimeters = microsecondsToCentimeters(duration);
 	return centimeters;
@@ -47,8 +54,8 @@ long microsecondsToCentimeters(long microseconds)
 	return microseconds / 52.2;
 }
 
-void configureUltrasonic(int triggerPin, int echoPin) {
-	pinMode(triggerPin, OUTPUT);
-	digitalWrite(triggerPin, LOW);
-	pinMode(echoPin, INPUT);
+void configureUltrasonic() {
+	pinMode(ultrasonicTriggerPin, OUTPUT);
+	digitalWrite(ultrasonicTriggerPin, LOW);
+	pinMode(ultrasonicEchoPin, INPUT);
 }
