@@ -7,20 +7,52 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConfigureModem", "Configure
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SensorFirmwareWithCustomProtocol", "SensorFirmwareWithCustomProtocol\SensorFirmwareWithCustomProtocol.vcxproj", "{2F0B571C-3D64-4557-B28E-AA3C12458AC7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadUsingCustomProtocol", "ReadUsingCustomProtocol\ReadUsingCustomProtocol.csproj", "{B2BED687-8365-4D49-BB50-A9202A0D4592}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|ARM = Release|ARM
+		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|ARM.ActiveCfg = Debug|Win32
+		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|x64.ActiveCfg = Debug|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|x86.ActiveCfg = Debug|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|x86.Build.0 = Debug|Win32
+		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|ARM.ActiveCfg = Release|Win32
+		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|x64.ActiveCfg = Release|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|x86.ActiveCfg = Release|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|x86.Build.0 = Release|Win32
+		{2F0B571C-3D64-4557-B28E-AA3C12458AC7}.Debug|ARM.ActiveCfg = Debug|Win32
+		{2F0B571C-3D64-4557-B28E-AA3C12458AC7}.Debug|x64.ActiveCfg = Debug|Win32
 		{2F0B571C-3D64-4557-B28E-AA3C12458AC7}.Debug|x86.ActiveCfg = Debug|Win32
 		{2F0B571C-3D64-4557-B28E-AA3C12458AC7}.Debug|x86.Build.0 = Debug|Win32
+		{2F0B571C-3D64-4557-B28E-AA3C12458AC7}.Release|ARM.ActiveCfg = Release|Win32
+		{2F0B571C-3D64-4557-B28E-AA3C12458AC7}.Release|x64.ActiveCfg = Release|Win32
 		{2F0B571C-3D64-4557-B28E-AA3C12458AC7}.Release|x86.ActiveCfg = Release|Win32
 		{2F0B571C-3D64-4557-B28E-AA3C12458AC7}.Release|x86.Build.0 = Release|Win32
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Debug|ARM.ActiveCfg = Debug|ARM
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Debug|ARM.Build.0 = Debug|ARM
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Debug|ARM.Deploy.0 = Debug|ARM
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Debug|x64.ActiveCfg = Debug|x64
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Debug|x64.Build.0 = Debug|x64
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Debug|x64.Deploy.0 = Debug|x64
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Debug|x86.ActiveCfg = Debug|x86
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Debug|x86.Build.0 = Debug|x86
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Debug|x86.Deploy.0 = Debug|x86
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Release|ARM.ActiveCfg = Release|ARM
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Release|ARM.Build.0 = Release|ARM
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Release|ARM.Deploy.0 = Release|ARM
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Release|x64.ActiveCfg = Release|x64
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Release|x64.Build.0 = Release|x64
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Release|x64.Deploy.0 = Release|x64
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Release|x86.ActiveCfg = Release|x86
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Release|x86.Build.0 = Release|x86
+		{B2BED687-8365-4D49-BB50-A9202A0D4592}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
