@@ -9,7 +9,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <StackPanel>
-            <Button x:Name="ReadButton" Click="ReadButton_Click">Read</Button>
+            <Button x:Name="StartButton" Click="StartButton_Click">Read</Button>
             <TextBlock x:Name="ReadingTextBlock"></TextBlock>
         </StackPanel>
     </Grid>

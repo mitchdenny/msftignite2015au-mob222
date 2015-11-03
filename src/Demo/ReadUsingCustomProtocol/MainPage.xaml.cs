@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
+using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.Rfcomm;
 using Windows.Devices.Enumeration;
 using Windows.Devices.SerialCommunication;
@@ -28,14 +30,12 @@ namespace ReadUsingCustomProtocol
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private BluetoothSerial bluetooth = new BluetoothSerial("RNBT-9E86");
-
         public MainPage()
         {
             this.InitializeComponent();
         }
 
-        private async void ReadButton_Click(object sender, RoutedEventArgs e)
+        private async void StartButton_Click(object sender, RoutedEventArgs e)
         {
             var devices = await DeviceInformation.FindAllAsync(
                 RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort)
@@ -43,18 +43,42 @@ namespace ReadUsingCustomProtocol
 
             var device = devices.First();
             var service = await RfcommDeviceService.FromIdAsync(device.Id);
-            var socket = new StreamSocket();
-            await socket.ConnectAsync(service.ConnectionHostName, service.ConnectionServiceName, SocketProtectionLevel.BluetoothEncryptionAllowNullAuthentication);
-            var reader = new DataReader(socket.InputStream);
-            reader.InputStreamOptions = InputStreamOptions.ReadAhead;
+            using (var socket = new StreamSocket())
+            {
+                await socket.ConnectAsync(service.ConnectionHostName, service.ConnectionServiceName, SocketProtectionLevel.BluetoothEncryptionAllowNullAuthentication);
+                var reader = new DataReader(socket.InputStream);
+                reader.InputStreamOptions = InputStreamOptions.ReadAhead;
 
+                var distance = await this.ReadDistanceAsync(reader);
+                this.ReadingTextBlock.Text = distance.ToString();
+            }
+        }
+
+        private async Task<int> ReadDistanceAsync(DataReader reader)
+        {
+            var builder = new StringBuilder();
+            bool preceedingBreakEncountered = false;
 
             while (true)
             {
-                var length = await reader.LoadAsync(3);
-                var distance = reader.ReadString(3);
+                await reader.LoadAsync(1);
+                var character = reader.ReadString(1);
+                
+                if (preceedingBreakEncountered && character == "\r")
+                {
+                    break;
+                }
+                else if (preceedingBreakEncountered && char.IsDigit(character, 0))
+                {
+                    builder.Append(character);
+                }
+                else if (!preceedingBreakEncountered && character == "\n")
+                {
+                    preceedingBreakEncountered = true;
+                }
             }
 
+            return int.Parse(builder.ToString());
         }
     }
 }
