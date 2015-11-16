@@ -13,6 +13,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -30,55 +31,74 @@ namespace ReadUsingCustomProtocol
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private Task captureReadingsTask;
+
         public MainPage()
         {
             this.InitializeComponent();
         }
 
-        private async void StartButton_Click(object sender, RoutedEventArgs e)
+        private async Task CaptureReadings()
         {
             var devices = await DeviceInformation.FindAllAsync(
                 RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort)
                 );
 
-            var device = devices.First();
-            var service = await RfcommDeviceService.FromIdAsync(device.Id);
+            var device = devices.Single((x) => x.Name == "RNBT-9A57");
+
+            RfcommDeviceService service = null;
+
+            await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                service = RfcommDeviceService.FromIdAsync(device.Id).AsTask().Result;
+            });
+
             using (var socket = new StreamSocket())
             {
                 await socket.ConnectAsync(service.ConnectionHostName, service.ConnectionServiceName, SocketProtectionLevel.BluetoothEncryptionAllowNullAuthentication);
                 var reader = new DataReader(socket.InputStream);
-                reader.InputStreamOptions = InputStreamOptions.ReadAhead;
 
-                var distance = await this.ReadDistanceAsync(reader);
-                this.ReadingTextBlock.Text = distance.ToString();
+                while (true)
+                {
+                    var distance = await this.ReadDistanceAsync(reader);
+
+                    await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        this.ReadingTextBlock.Text = distance.ToString();
+                    });
+                }
             }
         }
 
         private async Task<int> ReadDistanceAsync(DataReader reader)
         {
             var builder = new StringBuilder();
-            bool preceedingBreakEncountered = false;
 
             while (true)
             {
                 await reader.LoadAsync(1);
-                var character = reader.ReadString(1);
-                
-                if (preceedingBreakEncountered && character == "\r")
+                var input = reader.ReadString(1);
+
+                if (input == "|")
                 {
-                    break;
+                    int distance = 0;
+                    int.TryParse(builder.ToString(), out distance);
+                    return distance;
                 }
-                else if (preceedingBreakEncountered && char.IsDigit(character, 0))
+                else
                 {
-                    builder.Append(character);
-                }
-                else if (!preceedingBreakEncountered && character == "\n")
-                {
-                    preceedingBreakEncountered = true;
+                    builder.Append(input);
                 }
             }
+        }
 
-            return int.Parse(builder.ToString());
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.captureReadingsTask = Task.Run(this.CaptureReadings);
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
         }
     }
 }
