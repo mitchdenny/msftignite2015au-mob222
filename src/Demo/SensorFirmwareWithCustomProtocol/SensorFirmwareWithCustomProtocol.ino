@@ -15,10 +15,20 @@ void setup() {
 }
 
 void loop() {
-	long distance = readDistanceWithUltrasonic();
-	Serial.println(distance);
-	bluetooth.println(distance);
-	delay(1000);
+	while (true) {
+
+		String command = bluetooth.readStringUntil('\r');
+
+		if (command == "read") {
+			long distance = readDistanceWithUltrasonic();
+
+			//if (Serial.availableForWrite()) {
+			//	Serial.println(distance);
+			//}
+
+			bluetooth.println(distance);
+		}
+	}
 }
 
 void configureBluetooth() {
@@ -34,6 +44,7 @@ void configureBluetooth() {
 }
 
 long readDistanceWithUltrasonic() {
+
 	digitalWrite(ultrasonicTriggerPin, LOW);
 	delayMicroseconds(2);
 	digitalWrite(ultrasonicTriggerPin, HIGH);
