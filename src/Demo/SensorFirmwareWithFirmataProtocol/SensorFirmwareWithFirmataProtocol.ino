@@ -441,6 +441,7 @@ void sysexCallback(byte command, byte argc, byte *argv)
 			delay(1000);
 		
 		}
+
 		break;
 
 	case I2C_REQUEST:

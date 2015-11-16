@@ -44,7 +44,6 @@ namespace ReadUsingFirmataProtocol
                 this.firmata = new UwpFirmata();
                 this.firmata.FirmataConnectionReady += Firmata_FirmataConnectionReady;
                 this.firmata.StringMessageReceived += Firmata_StringMessageReceived;
-
                 this.device = new RemoteDevice(firmata);
                 this.firmata.begin(bluetooth);
                 bluetooth.begin(9600, SerialConfig.SERIAL_8N1);
@@ -60,10 +59,10 @@ namespace ReadUsingFirmataProtocol
             });
         }
 
-        private void Firmata_FirmataConnectionReady()
+        private async void Firmata_FirmataConnectionReady()
         {
             byte ULTRASONIC_DISTANCE_QUERY = 0x42;
-            this.firmata.sendSysex(ULTRASONIC_DISTANCE_QUERY, new byte[] { 0 }.AsBuffer());
+            this.firmata.sendSysex(ULTRASONIC_DISTANCE_QUERY, new byte[] { 99 }.AsBuffer());
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
