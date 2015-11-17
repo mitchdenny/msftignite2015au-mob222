@@ -39,18 +39,44 @@ namespace ReadUsingCustomProtocol
 
         private async Task CaptureReadings()
         {
+            #region Cheat
+            //var devices = await DeviceInformation.FindAllAsync(
+            //    RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort)
+            //    );
+
+            //var device = devices.Single((x) => x.Name == "RNBT-9A57");
+
+            //RfcommDeviceService service = null;
+
+            //await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            //{
+            //    service = RfcommDeviceService.FromIdAsync(device.Id).AsTask().Result;
+            //});
+
+            //using (var socket = new StreamSocket())
+            //{
+            //    await socket.ConnectAsync(service.ConnectionHostName, service.ConnectionServiceName, SocketProtectionLevel.BluetoothEncryptionAllowNullAuthentication);
+            //    var reader = new DataReader(socket.InputStream);
+
+            //    while (true)
+            //    {
+            //        var distance = await this.ReadDistanceAsync(reader);
+
+            //        await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            //        {
+            //            this.ReadingTextBlock.Text = distance.ToString();
+            //        });
+            //    }
+            //}
+            #endregion
+
             var devices = await DeviceInformation.FindAllAsync(
                 RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort)
                 );
 
-            var device = devices.Single((x) => x.Name == "RNBT-9A57");
+            var device = devices.Single(x => x.Name == "RNBT-9A57");
 
-            RfcommDeviceService service = null;
-
-            await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                service = RfcommDeviceService.FromIdAsync(device.Id).AsTask().Result;
-            });
+            RfcommDeviceService service = await RfcommDeviceService.FromIdAsync(device.Id);
 
             using (var socket = new StreamSocket())
             {
