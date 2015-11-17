@@ -105,17 +105,14 @@ namespace SensorGateway
 
             while (true)
             {
-                this.distance = this.distance + this.generator.Next(-5, 5);
-                this.temperature = this.temperature + this.generator.Next(-1, 1);
-                this.humidity = this.temperature + this.generator.Next(-1, 1);
-
                 var reading = new
                 {
                     DeviceId = deviceId,
-                    Distance = distance,
-                    Humidity = humidity,
-                    Temperature = temperature,
-                    ExternalTemperature = temperature
+
+                    // HACK: Just replacing an existing property. 
+                    Humidity = distance,
+                    Temperature = distance,
+                    ExternalTemperature = distance
                 };
 
                 var readingString = JsonConvert.SerializeObject(reading);
@@ -149,11 +146,11 @@ namespace SensorGateway
 
                 while (true)
                 {
-                    var distance = await this.ReadDistanceAsync(reader);
+                    this.distance = await this.ReadDistanceAsync(reader);
 
                     await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
-                        this.ReadingTextBlock.Text = distance.ToString();
+                        this.ReadingTextBlock.Text = this.distance.ToString();
                     });
                 }
             }
