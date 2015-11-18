@@ -41,9 +41,7 @@ namespace SensorGateway
         private Random generator = new Random();
 
         private double distance = 24;
-        private double temperature = 19;
-        private double humidity = 50;
-
+ 
         private async Task SendTelemetry()
         {
             var deviceId = "ef7ee566-d7c9-4662-9d16-795c43c929b7";

@@ -81,6 +81,7 @@ namespace ReadUsingCustomProtocol
             using (var socket = new StreamSocket())
             {
                 await socket.ConnectAsync(service.ConnectionHostName, service.ConnectionServiceName, SocketProtectionLevel.BluetoothEncryptionAllowNullAuthentication);
+
                 var reader = new DataReader(socket.InputStream);
 
                 while (true)
@@ -93,6 +94,7 @@ namespace ReadUsingCustomProtocol
                     });
                 }
             }
+
         }
 
         private async Task<int> ReadDistanceAsync(DataReader reader)
