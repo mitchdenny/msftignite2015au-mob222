@@ -44,91 +44,91 @@ namespace SensorGateway
  
         private async Task SendTelemetry()
         {
-            var deviceId = "ef7ee566-d7c9-4662-9d16-795c43c929b7";
+            //var deviceId = "ef7ee566-d7c9-4662-9d16-795c43c929b7";
 
-            var client = DeviceClient.Create(
-                "msauignite.azure-devices.net",
-                new DeviceAuthenticationWithRegistrySymmetricKey(
-                    deviceId,
-                    "HX5oWKUl2AfGqzDez0ArFw=="
-                    ),
-                TransportType.Http1
-                );
+            //var client = DeviceClient.Create(
+            //    "msauignite.azure-devices.net",
+            //    new DeviceAuthenticationWithRegistrySymmetricKey(
+            //        deviceId,
+            //        "HX5oWKUl2AfGqzDez0ArFw=="
+            //        ),
+            //    TransportType.Http1
+            //    );
 
-            var deviceMetadata = new
-            {
-                ObjectType = "DeviceInfo",
-                IsSimulatedDevice = 0,
-                Version = "1.0",
-                DeviceProperties = new
-                {
-                    DeviceID = deviceId,
-                    HubEnabledState = 1,
-                    CreatedTime = DateTime.UtcNow,
-                    DeviceState = "normal",
-                    UpdatedTime = DateTime.UtcNow,
-                    Manufacturer = "Microsoft",
-                    ModelNumber = "RDFY-X9000-001",
-                    SerialNumber = "X9000-001-ABC123",
-                    FirmwareVersion = "1.10",
-                    Platform = "Windows IoT Core",
-                    Processor = "ARM",
-                    InstalledRAM = "64 MB",
-                    Latitude = -28.0284672,
-                    Longitude = 153.427156,
-                },
-                Commands = new []
-                {
-                    new {
-                        Name = "LockPump",
-                        Parameters = new []
-                        {
-                            new { Name = "Minutes", Type = "double"}
-                        }
-                    },
-                    new {
-                        Name = "UnlockPump",
-                        Parameters = new []
-                        {
-                            new { Name = "Minutes", Type = "double"}
-                        }
-                    }
-                }
-            };
+            //var deviceMetadata = new
+            //{
+            //    ObjectType = "DeviceInfo",
+            //    IsSimulatedDevice = 0,
+            //    Version = "1.0",
+            //    DeviceProperties = new
+            //    {
+            //        DeviceID = deviceId,
+            //        HubEnabledState = 1,
+            //        CreatedTime = DateTime.UtcNow,
+            //        DeviceState = "normal",
+            //        UpdatedTime = DateTime.UtcNow,
+            //        Manufacturer = "Microsoft",
+            //        ModelNumber = "RDFY-X9000-001",
+            //        SerialNumber = "X9000-001-ABC123",
+            //        FirmwareVersion = "1.10",
+            //        Platform = "Windows IoT Core",
+            //        Processor = "ARM",
+            //        InstalledRAM = "64 MB",
+            //        Latitude = -28.0284672,
+            //        Longitude = 153.427156,
+            //    },
+            //    Commands = new []
+            //    {
+            //        new {
+            //            Name = "LockPump",
+            //            Parameters = new []
+            //            {
+            //                new { Name = "Minutes", Type = "double"}
+            //            }
+            //        },
+            //        new {
+            //            Name = "UnlockPump",
+            //            Parameters = new []
+            //            {
+            //                new { Name = "Minutes", Type = "double"}
+            //            }
+            //        }
+            //    }
+            //};
 
-            var deviceMetadataString = JsonConvert.SerializeObject(deviceMetadata);
-            var deviceMetadataBytes = Encoding.ASCII.GetBytes(deviceMetadataString);
-            var deviceMetadataMessage = new Message(deviceMetadataBytes);
-            await client.SendEventAsync(deviceMetadataMessage);
+            //var deviceMetadataString = JsonConvert.SerializeObject(deviceMetadata);
+            //var deviceMetadataBytes = Encoding.ASCII.GetBytes(deviceMetadataString);
+            //var deviceMetadataMessage = new Message(deviceMetadataBytes);
+            //await client.SendEventAsync(deviceMetadataMessage);
 
             while (true)
             {
-                var reading = new
-                {
-                    DeviceId = deviceId,
+                //var reading = new
+                //{
+                //    DeviceId = deviceId,
 
-                    // HACK: Just replacing an existing property. 
-                    Humidity = distance,
-                    Temperature = distance,
-                    ExternalTemperature = distance
-                };
+                //    // HACK: Just replacing an existing property. 
+                //    Humidity = distance,
+                //    Temperature = distance,
+                //    ExternalTemperature = distance
+                //};
 
-                var readingString = JsonConvert.SerializeObject(reading);
-                var readingBytes = Encoding.ASCII.GetBytes(readingString);
+                //var readingString = JsonConvert.SerializeObject(reading);
+                //var readingBytes = Encoding.ASCII.GetBytes(readingString);
 
-                var readingMessage = new Message(readingBytes);
-                await client.SendEventAsync(readingMessage);
+                //var readingMessage = new Message(readingBytes);
+                //await client.SendEventAsync(readingMessage);
                 await Task.Delay(10000);
             }
         }
 
-        private async Task CaptureReadings()
+        private async Task CaptureSensorReadingsAsync(string sensorName)
         {
             var devices = await DeviceInformation.FindAllAsync(
                 RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort)
                 );
 
-            var device = devices.Single((x) => x.Name == "RNBT-9A57");
+            var device = devices.Single((x) => x.Name == sensorName);
 
             RfcommDeviceService service = null;
 
@@ -144,11 +144,12 @@ namespace SensorGateway
 
                 while (true)
                 {
-                    this.distance = await this.ReadDistanceAsync(reader);
+                     var distance = await this.ReadDistanceAsync(reader);
+                    Debug.WriteLine("{0} {1}: {2}", DateTimeOffset.UtcNow, sensorName, this.distance);
 
                     await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
-                        this.ReadingTextBlock.Text = this.distance.ToString();
+                        this.ReadingTextBlock.Text = $"{sensorName}: {distance}";
                     });
                 }
             }
@@ -178,7 +179,8 @@ namespace SensorGateway
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            Task.Run(this.CaptureReadings);
+            Task.Run(() => this.CaptureSensorReadingsAsync("RNBT-9A57"));
+            Task.Run(() => this.CaptureSensorReadingsAsync("RNBT-9E86"));
             Task.Run(this.SendTelemetry);
         }
     }
